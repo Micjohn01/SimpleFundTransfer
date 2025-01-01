@@ -55,5 +55,35 @@ contract SimpleFundTransfer {
     function getBalance() public view returns (uint) {
         return address(this).balance;
     }
+
+    // Individual balances tracking
+    mapping(address => uint) public balances;
+
+    function getIndividualBalance(address account) public view returns (uint) {
+        return balances[account];
+    }
+
+    // Whitelist functionality
+    mapping(address => bool) public whitelist;
+
+    function addToWhitelist(address account) public onlyOwner {
+        whitelist[account] = true;
+    }
+
+    function removeFromWhitelist(address account) public onlyOwner {
+        whitelist[account] = false;
+    }
+
+    function transferToWhitelisted(address to, uint amount) public onlyOwner {
+        require(whitelist[to], "Address not whitelisted");
+        require(totalAmount >= amount, "Insufficient funds");
+
+        totalAmount -= amount;
+
+        (bool success,) = to.call{value: amount}("");
+        require(success, "Transfer failed");
+
+        emit Transfer(owner, to, amount);
+    }
     
 }
