@@ -85,5 +85,18 @@ contract SimpleFundTransfer {
 
         emit Transfer(owner, to, amount);
     }
+
+    // Withdraw all funds
+    function withdrawAll() public onlyOwner {
+        uint amount = address(this).balance;
+        require(amount > 0, "No funds to withdraw");
+
+        totalAmount = 0;
+
+        (bool success,) = owner.call{value: amount}("");
+        require(success, "Withdrawal failed");
+
+        emit Withdrawal(owner, amount);
+    }
     
 }
