@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 contract SimpleFundTransfer {
     address public owner;
     uint public totalAmount;
+    uint public withdrawalLimit = 1 ether;
 
     constructor() {
         owner = msg.sender;
@@ -97,6 +98,11 @@ contract SimpleFundTransfer {
         require(success, "Withdrawal failed");
 
         emit Withdrawal(owner, amount);
+    }
+
+    // Set withdrawal limit
+    function setWithdrawalLimit(uint newLimit) public onlyOwner {
+        withdrawalLimit = newLimit;
     }
     
 }
