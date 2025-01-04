@@ -5,6 +5,7 @@ contract SimpleFundTransfer {
     address public owner;
     uint public totalAmount;
     uint public withdrawalLimit = 1 ether;
+    bool public isPaused = false;
 
     constructor() {
         owner = msg.sender;
@@ -15,9 +16,16 @@ contract SimpleFundTransfer {
         _; 
     }
 
+     modifier whenNotPaused() {
+        require(!isPaused, "Contract is paused");
+        _;
+    }
+
     event Deposit(address indexed from, uint amount);
     event Withdrawal(address indexed to, uint amount);
     event Transfer(address indexed from, address indexed to, uint amount);
+    event Paused(address indexed by);
+    event Resumed(address indexed by);
 
     function deposit() public payable {
         require(msg.value > 0, "Can't deposit 0 amount");
@@ -103,6 +111,18 @@ contract SimpleFundTransfer {
     // Set withdrawal limit
     function setWithdrawalLimit(uint newLimit) public onlyOwner {
         withdrawalLimit = newLimit;
+    }
+
+    // Pause the contract
+    function pause() public onlyOwner {
+        isPaused = true;
+        emit Paused(msg.sender);
+    }
+
+    // Resume the contract
+    function resume() public onlyOwner {
+        isPaused = false;
+        emit Resumed(msg.sender);
     }
     
 }
