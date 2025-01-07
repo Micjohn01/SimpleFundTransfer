@@ -42,5 +42,29 @@ describe("SimpleFundTransfer Contract", function () {
     expect(await contract.totalAmount()).to.equal(depositAmount.sub(withdrawAmount));
   });
 
+    it("Should prevent withdrawal beyond the limit", async function () {
+    const depositAmount = utils.parseEther("1");
+    const withdrawAmount = utils.parseEther("2");
+
+    await contract.connect(addr1).deposit({ value: depositAmount });
+
+    await expect(contract.connect(owner).withdrawAmount(withdrawAmount)).to.be.revertedWith("Insufficient funds");
+  });
+
+  it("Should allow the owner to transfer to a whitelisted address", async function () {
+    const depositAmount = utils.parseEther("2");
+    const transferAmount = utils.parseEther("1");
+
+    await contract.connect(addr1).deposit({ value: depositAmount });
+
+    await contract.connect(owner).addToWhitelist(addr2.address);
+    await expect(contract.connect(owner).transferToWhitelisted(addr2.address, transferAmount))
+      .to.emit(contract, "Transfer")
+      .withArgs(owner.address, addr2.address, transferAmount);
+
+    expect(await contract.totalAmount()).to.equal(depositAmount.sub(transferAmount));
+  });
+
+
 
  });
