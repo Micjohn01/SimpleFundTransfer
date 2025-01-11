@@ -65,6 +65,17 @@ describe("SimpleFundTransfer Contract", function () {
     expect(await contract.totalAmount()).to.equal(depositAmount.sub(transferAmount));
   });
 
+    it("Should prevent transfers to non-whitelisted addresses", async function () {
+    const depositAmount = utils.parseEther("2");
+    const transferAmount = utils.parseEther("1");
+
+    await contract.connect(addr1).deposit({ value: depositAmount });
+
+    await expect(contract.connect(owner).transferToWhitelisted(addr2.address, transferAmount)).to.be.revertedWith(
+      "Address not whitelisted"
+    );
+  });
+
 
 
  });
