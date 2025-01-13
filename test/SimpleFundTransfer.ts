@@ -84,6 +84,14 @@ describe("SimpleFundTransfer Contract", function () {
       "Contract is paused"
     );
 
+        await contract.connect(owner).resume();
+    expect(await contract.isPaused()).to.be.false;
+
+    await expect(contract.connect(addr1).deposit({ value: utils.parseEther("1") }))
+      .to.emit(contract, "Deposit")
+      .withArgs(addr1.address, utils.parseEther("1"));
+  });
+
+
 
   });
-});
