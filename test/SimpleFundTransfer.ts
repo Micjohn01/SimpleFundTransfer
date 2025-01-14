@@ -92,6 +92,11 @@ describe("SimpleFundTransfer Contract", function () {
       .withArgs(addr1.address, utils.parseEther("1"));
   });
 
+  it("Should prevent non-owners from pausing or resuming the contract", async function () {
+    await expect(contract.connect(addr1).pause()).to.be.revertedWith("You are not the owner");
+    await expect(contract.connect(addr1).resume()).to.be.revertedWith("You are not the owner");
+  });
+
 
 
   });
