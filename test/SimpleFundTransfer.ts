@@ -97,6 +97,11 @@ describe("SimpleFundTransfer Contract", function () {
     await expect(contract.connect(addr1).resume()).to.be.revertedWith("You are not the owner");
   });
 
+    it("Should allow the owner to change ownership", async function () {
+    await contract.connect(owner).changeOwner(addr1.address);
+    expect(await contract.owner()).to.equal(addr1.address);
+  });
+
 
 
   });
